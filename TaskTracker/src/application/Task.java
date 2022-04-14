@@ -6,7 +6,7 @@ import java.util.Stack;
 
 import javafx.scene.control.Button;
 
-public class Case {
+public class Task {
 	private boolean active;
 	private LocalDateTime myDateObj = LocalDateTime.now();
 	private long startTime = 0;
@@ -16,15 +16,15 @@ public class Case {
 	private Button start = new Button("Start");
 	private Button stop = new Button("Stop");
 	private Button refresh = new Button("Refresh");
-	private Button clearCase = new Button("Close Case");
+	private Button clearTask = new Button("Close Task");
 	private Stack<Long> timeList = new Stack<>();
 
-	public Case() {
+	public Task() {
 		active = false;
-		title = "case " + this.getClass();
+		title = "Task " + this.getClass();
 	}
 
-	public Case(String title) {
+	public Task(String title) {
 		active = false;
 		this.title = title;
 	}
@@ -36,18 +36,56 @@ public class Case {
 	}
 
 	public String getTotalTime() {
-			if (totalTime == 0)
-				return totalTime + "";
-			if (totalTime >= 3.6e6)
-				return (totalTime / 1000) / 60 / 60 + " hours " + ((totalTime / 1000) / 60) % 60 + " minutes"; // returns hours and minutes
-			else if ((totalTime / 1000) >= 60)
-				return (totalTime / 1000) / 60 + " minutes " + totalTime / 1000 % 60 + " seconds"; // returns minutes and seconds
-			else
-				return (totalTime / 1000) + " seconds"; // returns seconds
+		if (totalTime == 0)
+			return totalTime + "";
+		// returns hours and minutes
+		if (totalTime >= 3.6e6)
+			return (totalTime / 1000) / 60 / 60 + " hours " + ((totalTime / 1000) / 60) % 60 + " minutes"; 
+		 // returns minutes and seconds
+		else if ((totalTime / 1000) >= 60)
+			return (totalTime / 1000) / 60 + " minutes " + totalTime / 1000 % 60 + " seconds";
+		// returns seconds
+		else
+			return (totalTime / 1000) + " seconds"; 
 	}
+
 	public Long getTotalTimeOnly() {
 		return totalTime;
 	}
+
+	public String getTimeWorked() {
+		long time = 0;
+		if (active) {
+			// the start buttons has been pressed but the stop btn hasn't been pressed
+			time = System.currentTimeMillis() - startTime;
+
+			if (time == 0)
+				return time + "";
+			if (time >= 3.6e6)
+				return (time / 1000) / 60 / 60 % 24 + " hours " + ((time / 1000) / 60) % 60 + " minutes"; // returns
+																											// hours and
+																											// minutes
+			else if ((time / 1000) >= 60)
+				return (time / 1000) / 60 + " minutes " + time / 1000 % 60 + " seconds"; // returns minutes and seconds
+			else
+				return (time / 1000) + " seconds"; // returns seconds
+
+		}
+		// if the Task is inactive (free)
+		else {
+			if (time == 0)
+				return time + "";
+			if (time >= 3.6e6)
+				return (time / 1000) / 60 / 60 % 24 + " hours " + ((time / 1000) / 60) % 60 + " minutes"; // returns
+																											// hours and
+																											// minutes
+			else if ((time / 1000) >= 60)
+				return (time / 1000) / 60 + " minutes " + time / 1000 % 60 + " seconds"; // returns minutes and seconds
+			else
+				return (time / 1000) + " seconds"; // returns seconds
+		}
+	}
+
 	public boolean isActive() {
 		return active;
 	}
@@ -56,40 +94,11 @@ public class Case {
 		active = a;
 	}
 
-	public String getTimeWorked() {
-		long time = 0;
-		if (active) {
-			 // the start buttons has been pressed but the stop btn hasn't been pressed
-				time = System.currentTimeMillis() - startTime;
-
-			if (time == 0)
-				return time + "";
-			if (time >= 3.6e6)
-				return (time / 1000) / 60 / 60 % 24 + " hours " + ((time / 1000) / 60) % 60 + " minutes"; // returns hours and minutes
-			else if ((time / 1000) >= 60)
-				return (time / 1000) / 60 + " minutes " + time / 1000 % 60 + " seconds"; // returns minutes and seconds
-			else
-				return (time / 1000) + " seconds"; // returns seconds
-
-		}
-		// if the case is inactive (free)
-		else {
-			if (time == 0)
-				return time + "";
-			if (time >= 3.6e6)
-				return (time / 1000) / 60 / 60 % 24 + " hours " + ((time / 1000) / 60) % 60 + " minutes"; // returns hours and minutes
-			else if ((time / 1000) >= 60)
-				return (time / 1000) / 60 + " minutes " + time / 1000 % 60 + " seconds"; // returns minutes and seconds
-			else
-				return (time / 1000) + " seconds"; // returns seconds
-		}
-	}
-
 	public void setStopTime() {
 		stopTime = System.currentTimeMillis();
 		timeList.push(stopTime - startTime);
 		totalTime += timeList.pop();
-		stopTime =0;
+		stopTime = 0;
 	}
 
 	public void setStartTime() {
@@ -113,15 +122,15 @@ public class Case {
 		return refresh;
 	}
 
-	public Button getClearCaseBtn() {
-		clearCase.setStyle("-fx-text-fill: #F43838");
-		return clearCase;
+	public Button getClearTaskBtn() {
+		clearTask.setStyle("-fx-text-fill: #F43838");
+		return clearTask;
 	}
 
 	@Override
 	public String toString() {
-		String str = "task name : "+this.getTitle() + "\n Date created : " + this.getDateTime()
-		+ "\n Time worked : " + this.getTimeWorked() + "\n Total Time : " + this.getTotalTime() + "\n";
+		String str = "task name: " + this.getTitle() + "\n Date created: " + this.getDateTime() + "\n Time worked: "
+				+ this.getTimeWorked() + "\n Total Time: " + this.getTotalTime() + "\n";
 		return str;
 	}
 }

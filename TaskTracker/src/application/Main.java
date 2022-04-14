@@ -22,7 +22,7 @@ import javafx.stage.Stage;
 import application.App;
 
 public class Main extends Application {
-	private ArrayList<Case> list = new ArrayList<>();
+	private ArrayList<Task> list = new ArrayList<>();
 	private boolean free = true;
 	private String summaryStr = "";
 	private ObservableList<String> items = FXCollections.observableArrayList();
@@ -30,17 +30,17 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			// pane for creating the cases
+			// pane for creating the Tasks
 			VBox vbox = new VBox(15);
 			vbox.setPadding(new Insets(15, 15, 15, 15));
 
 			TextField field = new TextField();
-			Button newcasebtn = new Button("New Case");
+			Button newTaskbtn = new Button("New Task");
 			Button summary = new Button("Summary");
-			Label activeCaseLabel = new Label("Active case: ");
-			Label activeCase = new Label("");
+			Label activeTaskLabel = new Label("Active Task: ");
+			Label activeTask = new Label("");
 
-			vbox.getChildren().addAll(new Label("New Case:"), field, newcasebtn, summary, activeCaseLabel, activeCase);
+			vbox.getChildren().addAll(new Label("New Task:"), field, newTaskbtn, summary, activeTaskLabel, activeTask);
 
 			// create ListView
 			FilteredList<String> data = new FilteredList<>(items, s -> true);
@@ -59,13 +59,13 @@ public class Main extends Application {
 			paneforListView.setPadding(new Insets(1, 10, 10, 10));
 			paneforListView.getChildren().addAll(searchBar,  lview);
 
-			// register and handle 'new case' button
-			newcasebtn.setOnAction(e -> {
+			// register and handle 'new Task' button
+			newTaskbtn.setOnAction(e -> {
 				// make sure not to make duplicates
 				if (!items.contains(field.getText()) && field.getText() != "") {
-					list.add(new Case(field.getText()));
+					list.add(new Task(field.getText()));
 					items.add(field.getText());
-					App.insertTask(list.get(list.size()-1));
+					System.out.println(App.insertTask(list.get(list.size()-1)));
 				}
 				System.out.println(list.toString());
 				field.setText("");
@@ -75,14 +75,15 @@ public class Main extends Application {
 				if(e.getCode() == KeyCode.ENTER) {
 					System.out.println(e.getText());
 					if(!items.contains(field.getText()) && field.getText() != "") {
-						list.add(new Case(field.getText()));
+						list.add(new Task(field.getText()));
 						items.add(field.getText());
+						App.insertTask(list.get(list.size()-1));
 					}
 					field.setText("");
 					System.out.println(list.toString());
 				}
 			});
-			// displays the case times
+			// displays the Task times
 			TextArea tarea = new TextArea();
 			tarea.setEditable(true);
 			tarea.setPrefColumnCount(5);
@@ -95,7 +96,7 @@ public class Main extends Application {
 				summaryStr = "";
 				long totalTime = 0;
 				String s = "";
-				for (Case i : list) {
+				for (Task i : list) {
 					summaryStr += i.toString() + "\n";
 					totalTime += i.getTotalTimeOnly();
 				}
@@ -113,10 +114,11 @@ public class Main extends Application {
 				else
 					s += (totalTime / 1000) + " seconds"; // returns seconds
 				tarea.setText(summaryStr + "Total Time for all is " + s);
+				
 			});
 
-			// pane for case button "start", "stop", and 'clear case' btns
-			HBox casebtns = new HBox(15);
+			// pane for Task button "start", "stop", and 'clear Task' btns
+			HBox Taskbtns = new HBox(15);
 
 			// add listener to ListView
 			lview.getSelectionModel().selectedItemProperty().addListener(ov -> {
@@ -125,33 +127,33 @@ public class Main extends Application {
 					if (s == lview.getSelectionModel().getSelectedItem())
 						i = items.indexOf(s);
 				}
-				// creates temp case
-				Case temp = list.get(i);
-				// gets the description about the case
+				// creates temp Task
+				Task temp = list.get(i);
+				// gets the description about the Task
 				if (list.size() > 0) {
 
 					tarea.setText(temp.toString());
 
 					// shows the 'start' and 'stop' buttons
-					casebtns.getChildren().clear();
-					casebtns.getChildren().addAll(temp.getStartBtn(), temp.getStopBtn(),
-							temp.getRefreshBtn(), temp.getClearCaseBtn());
+					Taskbtns.getChildren().clear();
+					Taskbtns.getChildren().addAll(temp.getStartBtn(), temp.getStopBtn(),
+							temp.getRefreshBtn(), temp.getClearTaskBtn());
 
 					temp.getStartBtn().setOnAction(e -> {
 						if (free) {
 							temp.setActive(true);
 							free = false;
 							temp.setStartTime();
-							activeCase.setText(temp.getTitle());
+							activeTask.setText(temp.getTitle());
 						}
 					});
 
 					temp.getStopBtn().setOnAction(e -> {
-						if (!free && temp.getTitle() == activeCase.getText()) {
+						if (!free && temp.getTitle() == activeTask.getText()) {
 							temp.setActive(false);
 							free = true;
 							temp.setStopTime();
-							activeCase.setText("");
+							activeTask.setText("");
 							tarea.setText(temp.toString());
 						}
 
@@ -161,7 +163,7 @@ public class Main extends Application {
 							tarea.setText(temp.toString());
 					});
 
-					temp.getClearCaseBtn().setOnAction(e -> {
+					temp.getClearTaskBtn().setOnAction(e -> {
 						free = true;
 						int index = items.indexOf(lview.getSelectionModel().getSelectedItem());
 						if (items.size() > 1) {
@@ -187,13 +189,13 @@ public class Main extends Application {
 			root.setRight(vbox);
 			root.setCenter(tarea);
 			root.setTop(paneforListView);
-			root.setBottom(casebtns);
+			root.setBottom(Taskbtns);
 
 			Scene scene = new Scene(root, 450, 450);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
-			primaryStage.setTitle("Vention Case Tracker");
+			primaryStage.setTitle("Task Tracker");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

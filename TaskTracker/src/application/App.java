@@ -7,6 +7,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import com.mongodb.MongoException;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -23,10 +24,11 @@ public class App {
 	static MongoClient mongoClient = MongoClients.create("mongodb+srv://casetrackerUser:superSafe@cluster0.uo7qm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
 	static MongoDatabase db = mongoClient.getDatabase("case_tracker");
 	static MongoCollection<Document> collection = db.getCollection("test_cases");
+
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		String connectionString = "mongodb+srv://casetrackerUser:superSafe@cluster0.uo7qm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-		
+
 		try (MongoClient mongoClient = MongoClients.create(connectionString)) {
 
 			MongoIterable<String> strings = mongoClient.listDatabaseNames();
@@ -40,7 +42,7 @@ public class App {
 			try {
 //				MongoCollection<Document> collection = db.getCollection();
 
-				 MongoCollection<Document> collection = db.getCollection("case");
+				MongoCollection<Document> collection = db.getCollection("case");
 //				db.createCollection("test");
 
 				// prints out collections in 'case' db
@@ -76,17 +78,26 @@ public class App {
 
 	}
 
-	public static void insertTask(Case task) {
-		//String[] arr = str.split(" : ");
-		
-		Document doc = new Document("taskName", task.getTitle())
-				.append("date created", task.getDateTime())
-				.append("total time", task.getTotalTime());
-		System.out.println(doc.toJson());
-		try {
-			InsertOneResult result = collection.insertOne(doc);
-		}catch (Exception e) {
-			throw e;
+	// returns true if successfully submitted to cluster, false otherwise
+	public static boolean insertTask(Task task) {
+		Bson filter = Filters.eq("taskName", task.getTitle());
+		if(collection.find(filter).first() == null) {
+			Document doc = new Document("taskName", task.getTitle()).append("date created", task.getDateTime())
+					.append("total time", task.getTotalTime());
+			System.out.println(doc.toJson());
+			try {
+				InsertOneResult result = collection.insertOne(doc);
+				return true;
+			} catch (Exception e) {
+				throw e;
+			}
 		}
+		return false;
+	}
+	
+	public static FindIterable<Document> findByName(String name) {
+		Bson filter = Filters.eq("taskName", name);
+		return collection.find(filter);
+		
 	}
 }
