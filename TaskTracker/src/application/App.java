@@ -95,9 +95,9 @@ public class App {
 		return false;
 	}
 	
-	public static FindIterable<Document> findByName(String name) {
+	public static String findByName(String name) {
 		Bson filter = Filters.eq("taskName", name);
-		return collection.find(filter);
+		return collection.find(filter).first().toJson();
 		
 	}
 }

@@ -14,9 +14,11 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import application.App;
@@ -39,12 +41,15 @@ public class Main extends Application {
 			Button summary = new Button("Summary");
 			Label activeTaskLabel = new Label("Active Task: ");
 			Label activeTask = new Label("");
-
+			TextArea tarea = new TextArea();
+			
 			vbox.getChildren().addAll(new Label("New Task:"), field, newTaskbtn, summary, activeTaskLabel, activeTask);
 
-			// create ListView
+			HBox searchContainer = new HBox(5);
+			
 			FilteredList<String> data = new FilteredList<>(items, s -> true);
 			TextField searchBar = new TextField();
+			searchBar.setMinWidth(345);
 			searchBar.textProperty().addListener(obs -> {
 				String filter = searchBar.getText();
 				if (filter == null || filter.length() == 0) {
@@ -54,11 +59,24 @@ public class Main extends Application {
 			});
 			ListView<String> lview = new ListView<>(data);
 			lview.setPrefSize(20, 110);
-
+			
+			Button searchBtn = new Button("Search");
+			
+			searchContainer.getChildren().addAll(searchBar, searchBtn);
+			
 			VBox paneforListView = new VBox(10);
 			paneforListView.setPadding(new Insets(1, 10, 10, 10));
-			paneforListView.getChildren().addAll(searchBar,  lview);
+			paneforListView.getChildren().addAll(searchContainer,  lview);
 
+			
+			searchBtn.setOnAction(e->{
+				if(searchBar.getText() != null || !searchBar.getText().isEmpty()) {
+					String task= searchBar.getText();
+					String result = App.findByName(task);
+					tarea.setText(result);
+				}
+			});
+			
 			// register and handle 'new Task' button
 			newTaskbtn.setOnAction(e -> {
 				// make sure not to make duplicates
@@ -84,7 +102,7 @@ public class Main extends Application {
 				}
 			});
 			// displays the Task times
-			TextArea tarea = new TextArea();
+			
 			tarea.setEditable(true);
 			tarea.setPrefColumnCount(5);
 			tarea.setPrefRowCount(6);
