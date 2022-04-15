@@ -16,7 +16,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoIterable;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.InsertOneResult;
-
+import com.mongodb.client.model.Projections;
 import java.util.*;
 import java.time.*;
 
@@ -97,7 +97,12 @@ public class App {
 	
 	public static String findByName(String name) {
 		Bson filter = Filters.eq("taskName", name);
-		return collection.find(filter).first().toJson();
-		
+		try {
+		String str = collection.find(filter).projection(Projections.excludeId()).first().toJson();
+			return str;
+		}
+		catch(NullPointerException e) {
+			return "{}";
+		}
 	}
 }

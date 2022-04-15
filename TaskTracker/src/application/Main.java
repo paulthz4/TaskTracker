@@ -50,6 +50,8 @@ public class Main extends Application {
 			FilteredList<String> data = new FilteredList<>(items, s -> true);
 			TextField searchBar = new TextField();
 			searchBar.setMinWidth(345);
+			
+			// searches the Filtered list with the text in the text field, shows the resulting match 
 			searchBar.textProperty().addListener(obs -> {
 				String filter = searchBar.getText();
 				if (filter == null || filter.length() == 0) {
@@ -57,6 +59,7 @@ public class Main extends Application {
 				} else
 					data.setPredicate(s -> s.contains(filter));
 			});
+			// holds all the tasks
 			ListView<String> lview = new ListView<>(data);
 			lview.setPrefSize(20, 110);
 			
