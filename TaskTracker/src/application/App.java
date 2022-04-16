@@ -16,7 +16,10 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoIterable;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.InsertOneResult;
+import com.mongodb.client.result.UpdateResult;
 import com.mongodb.client.model.Projections;
+import com.mongodb.client.model.Updates;
+
 import java.util.*;
 import java.time.*;
 
@@ -104,5 +107,13 @@ public class App {
 		catch(NullPointerException e) {
 			return "{}";
 		}
+	}
+	
+	public static void update(Task task) {
+		Bson filter = Filters.eq("taskName", task.getTitle());
+		Document doc = new Document("taskName", task.getTitle())
+				.append("date created", task.getDateTime())
+				.append("total time", task.getTotalTime());
+		UpdateResult result = collection.updateOne(filter, doc);
 	}
 }
