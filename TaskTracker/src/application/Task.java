@@ -29,7 +29,19 @@ public class Task {
 		active = false;
 		this.title = title;
 	}
-
+	
+	public String getDate() {
+		DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("E MMM dd yyyy");
+		String date = myDateObj.format(myFormatObj);
+		return date;
+	}
+	
+	public String getTimeCreated() {
+		DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("HH:mm:ss");
+		String time = myDateObj.format(myFormatObj);
+		return time;
+	}
+	
 	public String getDateTime() {
 		DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("E MMM dd yyyy HH:mm:ss");
 		String formattedDate = myDateObj.format(myFormatObj);

@@ -165,7 +165,7 @@ public class Main extends Application {
 							temp.setActive(true);
 							free = false;
 							temp.setStartTime();
-							activeTaskLabel.setText("Active Task: " + temp.getTitle());
+							
 							activeTask.setText(temp.getTitle());
 						}
 					});

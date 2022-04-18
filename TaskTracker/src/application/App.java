@@ -25,12 +25,14 @@ import java.util.*;
 import java.time.*;
 
 public class App {
-	static MongoClient mongoClient = MongoClients.create("mongodb+srv://casetrackerUser:superSafe@cluster0.uo7qm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
+	static MongoClient mongoClient = MongoClients.create(
+			"mongodb+srv://casetrackerUser:superSafe@cluster0.uo7qm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
 	static MongoDatabase db = mongoClient.getDatabase("case_tracker");
 	static MongoCollection<Document> collection = db.getCollection("test_cases");
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		// examples from mongodb docs
 		String connectionString = "mongodb+srv://casetrackerUser:superSafe@cluster0.uo7qm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
 		try (MongoClient mongoClient = MongoClients.create(connectionString)) {
@@ -84,9 +86,11 @@ public class App {
 
 	// returns true if successfully submitted to cluster, false otherwise
 	public static boolean insertTask(Task task) {
-		Bson filter = Filters.eq("taskName", task.getTitle());
-		if(collection.find(filter).first() == null) {
-			Document doc = new Document("taskName", task.getTitle()).append("date created", task.getDateTime())
+		Bson filter = Filters.and(Filters.eq("date created", task.getDate()), Filters.eq("taskName", task.getTitle()));
+		if (collection.find(filter).first() == null) {
+			Document doc = new Document("taskName", task.getTitle())
+					.append("date created", task.getDate())
+					.append("time created", task.getTimeCreated())
 					.append("total time", task.getTotalTime());
 			System.out.println(doc.toJson());
 			try {
@@ -98,36 +102,45 @@ public class App {
 		}
 		return false;
 	}
-	
+
 	public static String findByName(String name) {
 		Bson filter = Filters.eq("taskName", name);
 		try {
-		String str = collection.find(filter).projection(Projections.excludeId()).first().toJson();
+			String str = collection.find(filter).projection(Projections.excludeId()).first().toJson();
 			return str;
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			return "{}";
 		}
 	}
-	
+
 	public static boolean update(Task task) {
-		Bson filter = Filters.and(Filters.eq("date created", task.getDateTime()), Filters.eq("taskName", task.getTitle()));
+		Bson filter = Filters.and(Filters.eq("date created", task.getDate()), Filters.eq("taskName", task.getTitle()));
 		Document doc = new Document("taskName", task.getTitle())
-				.append("date created", task.getDateTime())
+				.append("date created", task.getDate())
+				.append("time created", task.getTimeCreated())
 				.append("total time", task.getTotalTime());
-		UpdateResult result = collection.replaceOne(filter, doc);
-		if(result.getMatchedCount() == 1)
-			return true;
-		else {
-			System.out.println(result);
-			return false;
+		try {
+			UpdateResult result = collection.replaceOne(filter, doc);
+			if (result.getMatchedCount() == 1)
+				return true;
+			else {
+				System.out.println(result);
+				return false;
+			}
+		} catch (Exception e) {
+			throw e;
 		}
 	}
-	
+
 	public static boolean deleteTask(Task task) {
-		Bson filter = Filters.eq("taskName", task.getTitle());
-		DeleteResult result = collection.deleteOne(filter);
-		System.out.println(result);
-		return result.wasAcknowledged();
+		Bson filter = Filters.and(Filters.eq("date created", task.getDate()), Filters.eq("taskName", task.getTitle()));
+
+		try {
+			DeleteResult result = collection.deleteOne(filter);
+			System.out.println(result);
+			return result.wasAcknowledged();
+		} catch (Exception e) {
+			throw e;
+		}
 	}
 }
