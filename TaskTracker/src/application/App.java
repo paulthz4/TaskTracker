@@ -15,6 +15,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoIterable;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
 import com.mongodb.client.model.Projections;
@@ -110,7 +111,7 @@ public class App {
 	}
 	
 	public static boolean update(Task task) {
-		Bson filter = Filters.eq("taskName", task.getTitle());
+		Bson filter = Filters.and(Filters.eq("date created", task.getDateTime()), Filters.eq("taskName", task.getTitle()));
 		Document doc = new Document("taskName", task.getTitle())
 				.append("date created", task.getDateTime())
 				.append("total time", task.getTotalTime());
@@ -121,5 +122,12 @@ public class App {
 			System.out.println(result);
 			return false;
 		}
+	}
+	
+	public static boolean deleteTask(Task task) {
+		Bson filter = Filters.eq("taskName", task.getTitle());
+		DeleteResult result = collection.deleteOne(filter);
+		System.out.println(result);
+		return result.wasAcknowledged();
 	}
 }

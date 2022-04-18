@@ -158,13 +158,14 @@ public class Main extends Application {
 					// shows the 'start' and 'stop' buttons
 					Taskbtns.getChildren().clear();
 					Taskbtns.getChildren().addAll(temp.getStartBtn(), temp.getStopBtn(),
-							temp.getRefreshBtn(), temp.getClearTaskBtn());
+							temp.getRefreshBtn(), temp.getClearTaskBtn(), temp.getDeleteTaskBtn());
 
 					temp.getStartBtn().setOnAction(e -> {
 						if (free) {
 							temp.setActive(true);
 							free = false;
 							temp.setStartTime();
+							activeTaskLabel.setText("Active Task: " + temp.getTitle());
 							activeTask.setText(temp.getTitle());
 						}
 					});
@@ -174,6 +175,7 @@ public class Main extends Application {
 							temp.setActive(false);
 							free = true;
 							temp.setStopTime();
+							activeTaskLabel.setText("Active Task: ");
 							activeTask.setText("");
 							tarea.setText(temp.toString());
 							App.update(temp);
@@ -200,6 +202,24 @@ public class Main extends Application {
 						tarea.setText(" ");
 
 					});
+					
+					temp.getDeleteTaskBtn().setOnAction(e->{
+						free = true;
+						int index = items.indexOf(lview.getSelectionModel().getSelectedItem());
+						if(items.size() != 0)
+							App.deleteTask(list.get(index));
+						if(items.size()>1) {
+							items.remove(index);
+							list.remove(index);
+						} else if(items.size() == 1) {
+							items.clear();
+							list.clear();
+							lview.getSelectionModel().clearSelection();
+							lview.setItems(items);
+						}
+						tarea.setText("");
+					});
+					
 				}
 
 			});
