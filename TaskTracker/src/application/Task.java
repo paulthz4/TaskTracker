@@ -16,7 +16,8 @@ public class Task {
 	private Button start = new Button("Start");
 	private Button stop = new Button("Stop");
 	private Button refresh = new Button("Refresh");
-	private Button clearTask = new Button("Close Task");
+	private Button clearTask = new Button("RemoveTask");
+	private Button deleteTask = new Button("Delete Task");
 	private Stack<Long> timeList = new Stack<>();
 
 	public Task() {
@@ -125,6 +126,11 @@ public class Task {
 	public Button getClearTaskBtn() {
 		clearTask.setStyle("-fx-text-fill: #F43838");
 		return clearTask;
+	}
+	
+	public Button getDeleteTaskBtn() {
+		deleteTask.setStyle("-fx-color:  #F43838");
+		return deleteTask;
 	}
 
 	@Override
