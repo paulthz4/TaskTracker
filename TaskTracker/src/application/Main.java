@@ -176,6 +176,7 @@ public class Main extends Application {
 							temp.setStopTime();
 							activeTask.setText("");
 							tarea.setText(temp.toString());
+							App.update(temp);
 						}
 
 					});

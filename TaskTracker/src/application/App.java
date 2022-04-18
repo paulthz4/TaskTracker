@@ -109,11 +109,17 @@ public class App {
 		}
 	}
 	
-	public static void update(Task task) {
+	public static boolean update(Task task) {
 		Bson filter = Filters.eq("taskName", task.getTitle());
 		Document doc = new Document("taskName", task.getTitle())
 				.append("date created", task.getDateTime())
 				.append("total time", task.getTotalTime());
-		UpdateResult result = collection.updateOne(filter, doc);
+		UpdateResult result = collection.replaceOne(filter, doc);
+		if(result.getMatchedCount() == 1)
+			return true;
+		else {
+			System.out.println(result);
+			return false;
+		}
 	}
 }
