@@ -4,6 +4,7 @@ import org.bson.BsonDocument;
 import org.bson.BsonInt64;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.json.JsonWriterSettings;
 import org.bson.types.ObjectId;
 
 import com.mongodb.MongoException;
@@ -18,6 +19,9 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
 import com.mongodb.client.result.UpdateResult;
+
+import javafx.collections.ObservableList;
+
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Updates;
 
@@ -104,6 +108,15 @@ public class App {
 	}
 
 	public static String findByName(String name) {
+		if(name.equals("all")) {
+			MongoCursor<Document> cursor = collection.find()
+					.projection(Projections.excludeId()).iterator();
+			String str = "";
+			while(cursor.hasNext()) {
+				str += "\n" + cursor.next().toJson(JsonWriterSettings.builder().indent(true).build());
+			}
+			return str;
+		}
 		Bson filter = Filters.eq("taskName", name);
 		try {
 			String str = collection.find(filter).projection(Projections.excludeId()).first().toJson();
@@ -111,6 +124,10 @@ public class App {
 		} catch (NullPointerException e) {
 			return "{}";
 		}
+	}
+	
+	public String getAll(String str, ObservableList<String> list) {
+		return "s";
 	}
 
 	public static boolean update(Task task) {
