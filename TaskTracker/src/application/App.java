@@ -119,8 +119,9 @@ public class App {
 				.append("date created", task.getDate())
 				.append("time created", task.getTimeCreated())
 				.append("total time", task.getTotalTime());
+		Bson update = Updates.set("total time", task.getTotalTime());
 		try {
-			UpdateResult result = collection.replaceOne(filter, doc);
+			UpdateResult result = collection.updateOne(filter, update);
 			if (result.getMatchedCount() == 1)
 				return true;
 			else {
