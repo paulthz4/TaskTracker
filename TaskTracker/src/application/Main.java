@@ -86,9 +86,9 @@ public class Main extends Application {
 				if (!items.contains(field.getText()) && field.getText() != "") {
 					list.add(new Task(field.getText()));
 					items.add(field.getText());
-					System.out.println(App.insertTask(list.get(list.size()-1)));
+					System.out.println("successful insert: "+App.insertTask(list.get(list.size()-1)));
 				}
-				System.out.println(list.toString());
+//				System.out.println(list.toString());
 				field.setText("");
 			});
 
@@ -98,10 +98,10 @@ public class Main extends Application {
 					if(!items.contains(field.getText()) && field.getText() != "") {
 						list.add(new Task(field.getText()));
 						items.add(field.getText());
-						App.insertTask(list.get(list.size()-1));
+						System.out.println("successful insert: "+App.insertTask(list.get(list.size()-1)));
 					}
 					field.setText("");
-					System.out.println(list.toString());
+//					System.out.println(list.toString());
 				}
 			});
 			// displays the Task times
@@ -178,7 +178,7 @@ public class Main extends Application {
 							activeTaskLabel.setText("Active Task: ");
 							activeTask.setText("");
 							tarea.setText(temp.toString());
-							App.update(temp);
+							System.out.println("successful update: "+App.update(temp));
 						}
 
 					});
@@ -207,7 +207,7 @@ public class Main extends Application {
 						free = true;
 						int index = items.indexOf(lview.getSelectionModel().getSelectedItem());
 						if(items.size() != 0)
-							App.deleteTask(list.get(index));
+							System.out.println("successful delete: "+App.deleteTask(list.get(index)));
 						if(items.size()>1) {
 							items.remove(index);
 							list.remove(index);
@@ -234,7 +234,7 @@ public class Main extends Application {
 			root.setBottom(Taskbtns);
 
 			Scene scene = new Scene(root, 450, 450);
-			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+//			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			primaryStage.setTitle("Task Tracker");
