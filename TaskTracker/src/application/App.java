@@ -108,21 +108,23 @@ public class App {
 	}
 
 	public static String findByName(String name) {
-		if(name.equals("all")) {
+		if(name.equals("all") || name.isEmpty()) {
 			MongoCursor<Document> cursor = collection.find()
 					.projection(Projections.excludeId()).iterator();
 			String str = "";
 			while(cursor.hasNext()) {
 				str += "\n" + cursor.next().toJson(JsonWriterSettings.builder().indent(true).build());
 			}
+			System.out.println("Returned all tasks from db");
 			return str;
 		}
 		Bson filter = Filters.eq("taskName", name);
 		try {
 			String str = collection.find(filter).projection(Projections.excludeId()).first().toJson();
+			System.out.println("seached for \""+ name+"\" task");
 			return str;
 		} catch (NullPointerException e) {
-			return "{}";
+			return "{ none found }";
 		}
 	}
 	
