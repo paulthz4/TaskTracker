@@ -31,8 +31,8 @@ import java.time.*;
 public class App {
 	static MongoClient mongoClient = MongoClients.create(
 			"mongodb+srv://newUser427:LeocXHZ9L99jZQ16@cluster0.uo7qm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
-	static MongoDatabase db = mongoClient.getDatabase("case_tracker");
-	static MongoCollection<Document> collection = db.getCollection("cases");
+	static MongoDatabase db = mongoClient.getDatabase("all_tasks");
+	static MongoCollection<Document> collection = db.getCollection("tasks");
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -93,7 +93,7 @@ public class App {
 		Bson filter = Filters.and(Filters.eq("date created", task.getDateCreated()), Filters.eq("taskName", task.getTitle()));
 		if (collection.find(filter).first() == null) {
 			Document doc = new Document("taskName", task.getTitle())
-					.append("date created", task.getDateAndTimeCreated())
+					.append("date created", task.getDateCreated())
 					.append("time created", task.getTimeCreated())
 					.append("total time", task.getTotalTime());
 			System.out.println(doc.toJson());
