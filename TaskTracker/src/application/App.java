@@ -30,14 +30,14 @@ import java.time.*;
 
 public class App {
 	static MongoClient mongoClient = MongoClients.create(
-			"mongodb+srv://casetrackerUser:superSafe@cluster0.uo7qm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
+			"mongodb+srv://newUser427:LeocXHZ9L99jZQ16@cluster0.uo7qm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
 	static MongoDatabase db = mongoClient.getDatabase("case_tracker");
-	static MongoCollection<Document> collection = db.getCollection("test_cases");
+	static MongoCollection<Document> collection = db.getCollection("cases");
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		// examples from mongodb docs
-		String connectionString = "mongodb+srv://casetrackerUser:superSafe@cluster0.uo7qm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+		String connectionString = "mongodb+srv://newUser427:LeocXHZ9L99jZQ16@cluster0.uo7qm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
 		try (MongoClient mongoClient = MongoClients.create(connectionString)) {
 
@@ -52,9 +52,10 @@ public class App {
 			try {
 //				MongoCollection<Document> collection = db.getCollection();
 
-				MongoCollection<Document> collection = db.getCollection("case");
+				MongoCollection<Document> collection = db.getCollection("test_cases");
 //				db.createCollection("test");
-
+				
+				
 				// prints out collections in 'case' db
 				MongoCursor<String> it = db.listCollectionNames().iterator();
 				System.out.println("collections in the " + db.getName() + " database");
@@ -62,9 +63,6 @@ public class App {
 					System.out.println("\t" + it.next());
 				}
 				System.out.println("Connected successfully to server.");
-
-				Bson filter = Filters.eq("name", "Paul Zapote");
-				collection.find(filter).forEach(doc -> System.out.println(doc.toJson()));
 
 				// see the data
 				Document doc = collection.find(Filters.eq("name", "Paul Zapote")).first();
@@ -81,6 +79,8 @@ public class App {
 						System.out.println(e + "\n");
 					}
 				}
+				Bson filter = Filters.eq("total time", "0");
+				System.out.println(collection.deleteMany(filter));
 			} catch (MongoException me) {
 				System.err.println("An error occurred while attempting to run a command");
 			}
@@ -90,16 +90,16 @@ public class App {
 
 	// returns true if successfully submitted to cluster, false otherwise
 	public static boolean insertTask(Task task) {
-		Bson filter = Filters.and(Filters.eq("date created", task.getDate()), Filters.eq("taskName", task.getTitle()));
+		Bson filter = Filters.and(Filters.eq("date created", task.getDateCreated()), Filters.eq("taskName", task.getTitle()));
 		if (collection.find(filter).first() == null) {
 			Document doc = new Document("taskName", task.getTitle())
-					.append("date created", task.getDate())
+					.append("date created", task.getDateAndTimeCreated())
 					.append("time created", task.getTimeCreated())
 					.append("total time", task.getTotalTime());
 			System.out.println(doc.toJson());
 			try {
 				InsertOneResult result = collection.insertOne(doc);
-				return true;
+				return result.wasAcknowledged();
 			} catch (Exception e) {
 				throw e;
 			}
@@ -107,6 +107,38 @@ public class App {
 		return false;
 	}
 
+	public static boolean update(Task task) {
+		Bson filter = Filters.and(Filters.eq("date created", task.getDateCreated()), Filters.eq("taskName", task.getTitle()));
+		Document doc = new Document("taskName", task.getTitle())
+				.append("date created", task.getDateCreated())
+				.append("time created", task.getTimeCreated())
+				.append("total time", task.getTotalTime());
+		Bson update = Updates.set("total time", task.getTotalTime());
+		try {
+			UpdateResult result = collection.updateOne(filter, update);
+			if (result.getMatchedCount() == 1)
+				return true;
+			else {
+				System.out.println(result);
+				return false;
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	public static boolean deleteTask(Task task) {
+		Bson filter = Filters.and(Filters.eq("date created", task.getDateCreated()), Filters.eq("taskName", task.getTitle()));
+
+		try {
+			DeleteResult result = collection.deleteOne(filter);
+			System.out.println(result);
+			return result.wasAcknowledged();
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
 	public static String findByName(String name) {
 		if(name.equals("all") || name.isEmpty()) {
 			MongoCursor<Document> cursor = collection.find()
@@ -125,42 +157,6 @@ public class App {
 			return str;
 		} catch (NullPointerException e) {
 			return "{ none found }";
-		}
-	}
-	
-	public String getAll(String str, ObservableList<String> list) {
-		return "s";
-	}
-
-	public static boolean update(Task task) {
-		Bson filter = Filters.and(Filters.eq("date created", task.getDate()), Filters.eq("taskName", task.getTitle()));
-		Document doc = new Document("taskName", task.getTitle())
-				.append("date created", task.getDate())
-				.append("time created", task.getTimeCreated())
-				.append("total time", task.getTotalTime());
-		Bson update = Updates.set("total time", task.getTotalTime());
-		try {
-			UpdateResult result = collection.updateOne(filter, update);
-			if (result.getMatchedCount() == 1)
-				return true;
-			else {
-				System.out.println(result);
-				return false;
-			}
-		} catch (Exception e) {
-			throw e;
-		}
-	}
-
-	public static boolean deleteTask(Task task) {
-		Bson filter = Filters.and(Filters.eq("date created", task.getDate()), Filters.eq("taskName", task.getTitle()));
-
-		try {
-			DeleteResult result = collection.deleteOne(filter);
-			System.out.println(result);
-			return result.wasAcknowledged();
-		} catch (Exception e) {
-			throw e;
 		}
 	}
 }

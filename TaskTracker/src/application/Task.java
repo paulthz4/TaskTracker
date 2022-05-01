@@ -1,5 +1,6 @@
 package application;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Stack;
@@ -9,6 +10,7 @@ import javafx.scene.control.Button;
 public class Task {
 	private boolean active;
 	private LocalDateTime myDateObj = LocalDateTime.now();
+	private LocalDate date = LocalDate.now();
 	private long startTime = 0;
 	private long stopTime;
 	private long totalTime;
@@ -29,21 +31,21 @@ public class Task {
 		active = false;
 		this.title = title;
 	}
-	
-	public String getDate() {
-		DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("E MMM dd yyyy");
+
+	public String getDateAndTimeCreated() {
+		DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy-dd-MM HH:mm:ss");
 		String date = myDateObj.format(myFormatObj);
 		return date;
 	}
-	
+
 	public String getTimeCreated() {
 		DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("HH:mm:ss");
 		String time = myDateObj.format(myFormatObj);
 		return time;
 	}
-	
-	public String getDateTime() {
-		DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("E MMM dd yyyy HH:mm:ss");
+
+	public String getDateCreated() {
+		DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy MMM dd E");
 		String formattedDate = myDateObj.format(myFormatObj);
 		return formattedDate;
 	}
@@ -53,13 +55,13 @@ public class Task {
 			return totalTime + "";
 		// returns hours and minutes
 		if (totalTime >= 3.6e6)
-			return (totalTime / 1000) / 60 / 60 + " hours " + ((totalTime / 1000) / 60) % 60 + " minutes"; 
-		 // returns minutes and seconds
+			return (totalTime / 1000) / 60 / 60 + " hours " + ((totalTime / 1000) / 60) % 60 + " minutes";
+		// returns minutes and seconds
 		else if ((totalTime / 1000) >= 60)
 			return (totalTime / 1000) / 60 + " minutes " + totalTime / 1000 % 60 + " seconds";
 		// returns seconds
 		else
-			return (totalTime / 1000) + " seconds"; 
+			return (totalTime / 1000) + " seconds";
 	}
 
 	public Long getTotalTimeOnly() {
@@ -139,7 +141,7 @@ public class Task {
 		clearTask.setStyle("-fx-text-fill: #F43838");
 		return clearTask;
 	}
-	
+
 	public Button getDeleteTaskBtn() {
 		deleteTask.setStyle("-fx-color:  #F43838");
 		return deleteTask;
@@ -147,7 +149,7 @@ public class Task {
 
 	@Override
 	public String toString() {
-		String str = "task name: " + this.getTitle() + "\n Date created: " + this.getDateTime() + "\n Time worked: "
+		String str = "Task name: " + this.getTitle() + "\n Date created: " + this.getDateCreated() + " "+this.getTimeCreated() + "\n Time worked: "
 				+ this.getTimeWorked() + "\n Total Time: " + this.getTotalTime() + "\n";
 		return str;
 	}
