@@ -14,6 +14,7 @@ public class Task {
 	private long startTime = 0;
 	private long stopTime;
 	private long totalTime;
+	private int stoppages = 0;
 	private String title;
 	private Button start = new Button("Start");
 	private Button stop = new Button("Stop");
@@ -30,6 +31,14 @@ public class Task {
 	public Task(String title) {
 		active = false;
 		this.title = title;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean a) {
+		active = a;
 	}
 
 	public String getDateAndTimeCreated() {
@@ -101,23 +110,20 @@ public class Task {
 		}
 	}
 
-	public boolean isActive() {
-		return active;
-	}
-
-	public void setActive(boolean a) {
-		active = a;
-	}
-
 	public void setStopTime() {
 		stopTime = System.currentTimeMillis();
 		timeList.push(stopTime - startTime);
 		totalTime += timeList.pop();
 		stopTime = 0;
+		stoppages++;
 	}
 
 	public void setStartTime() {
 		startTime = System.currentTimeMillis();
+	}
+	
+	public int getStoppages() {
+		return stoppages;
 	}
 
 	public String getTitle() {
@@ -149,8 +155,9 @@ public class Task {
 
 	@Override
 	public String toString() {
-		String str = "Task name: " + this.getTitle() + "\n Date created: " + this.getDateCreated() + " "+this.getTimeCreated() + "\n Time worked: "
-				+ this.getTimeWorked() + "\n Total Time: " + this.getTotalTime() + "\n";
+		String str = "Task name: " + this.getTitle() + "\n Date created: " + this.getDateCreated() + " "
+				+ this.getTimeCreated() + "\n Time worked: " + this.getTimeWorked() + "\n Total Time: "
+				+ this.getTotalTime() + "\n";
 		return str;
 	}
 }
