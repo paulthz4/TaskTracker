@@ -232,8 +232,10 @@ public class Main extends Application {
 			root.setCenter(tarea);
 			root.setTop(paneforListView);
 			root.setBottom(Taskbtns);
+//			root.set(Color.RED);
 
 			Scene scene = new Scene(root, 450, 450);
+			scene.setFill(Color.RED);
 //			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();

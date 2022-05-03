@@ -3,6 +3,8 @@ package application;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 import javafx.scene.control.Button;
@@ -15,6 +17,7 @@ public class Task {
 	private long stopTime;
 	private long totalTime;
 	private int stoppages = 0;
+	private List<String> stoppageTimes = new ArrayList<>();
 	private String title;
 	private Button start = new Button("Start");
 	private Button stop = new Button("Stop");
@@ -33,6 +36,21 @@ public class Task {
 		this.title = title;
 	}
 
+	// return time in hh:mm format
+	private String convertTime(long time) {
+		if (time == 0)
+			return time + "00:00:00";
+		// returns hours and minutes
+		if (time >= 3.6e6)
+			return (time / 1000) / 60 / 60 + ":" + ((time / 1000) / 60) % 60 + ":" + time/100 % 60;
+		// returns minutes and seconds
+		else if ((time / 1000) >= 60)
+			return "00:" + (time / 1000) / 60 + ":" + time / 1000 % 60 ;
+		// returns seconds
+		else
+			return "00:00:" + (time / 1000);
+	}
+	
 	public boolean isActive() {
 		return active;
 	}
@@ -113,6 +131,7 @@ public class Task {
 	public void setStopTime() {
 		stopTime = System.currentTimeMillis();
 		timeList.push(stopTime - startTime);
+		stoppageTimes.add(convertTime(stopTime - startTime));
 		totalTime += timeList.pop();
 		stopTime = 0;
 		stoppages++;
@@ -124,6 +143,10 @@ public class Task {
 	
 	public int getStoppages() {
 		return stoppages;
+	}
+	
+	public List<String> getStoppageTimesList(){
+		return this.stoppageTimes;
 	}
 
 	public String getTitle() {
