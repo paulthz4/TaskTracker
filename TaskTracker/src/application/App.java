@@ -95,7 +95,8 @@ public class App {
 			Document doc = new Document("taskName", task.getTitle())
 					.append("date created", task.getDateCreated())
 					.append("time created", task.getTimeCreated())
-					.append("total time", task.getTotalTime());
+					.append("total time", task.getTotalTime())
+					.append("stoppages", task.getStoppages());
 			System.out.println(doc.toJson());
 			try {
 				InsertOneResult result = collection.insertOne(doc);
@@ -112,10 +113,11 @@ public class App {
 		Document doc = new Document("taskName", task.getTitle())
 				.append("date created", task.getDateCreated())
 				.append("time created", task.getTimeCreated())
-				.append("total time", task.getTotalTime());
+				.append("total time", task.getTotalTime())
+				.append("stoppages", task.getStoppages());
 		Bson update = Updates.set("total time", task.getTotalTime());
 		try {
-			UpdateResult result = collection.updateOne(filter, update);
+			UpdateResult result = collection.replaceOne(filter, doc);
 			if (result.getMatchedCount() == 1)
 				return true;
 			else {
