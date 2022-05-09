@@ -47,12 +47,12 @@ public class App {
 				System.out.println(cursor.next());
 			}
 
-			MongoDatabase db = mongoClient.getDatabase("case_tracker");
+			MongoDatabase db = mongoClient.getDatabase("tasks");
 
 			try {
 //				MongoCollection<Document> collection = db.getCollection();
 
-				MongoCollection<Document> collection = db.getCollection("test_cases");
+				MongoCollection<Document> collection = db.getCollection("test_tasks");
 //				db.createCollection("test");
 				
 				
@@ -79,7 +79,7 @@ public class App {
 						System.out.println(e + "\n");
 					}
 				}
-				Bson filter = Filters.eq("total time", "0");
+				Bson filter = Filters.eq("date created", "2021 May 03 Tue.");
 				System.out.println(collection.deleteMany(filter));
 			} catch (MongoException me) {
 				System.err.println("An error occurred while attempting to run a command");
@@ -90,14 +90,14 @@ public class App {
 
 	// returns true if successfully submitted to cluster, false otherwise
 	public static boolean insertTask(Task task) {
-		Bson filter = Filters.and(Filters.eq("date created", task.getDateCreated()), Filters.eq("taskName", task.getTitle()));
+		Bson filter = Filters.and(Filters.eq("date_created", task.getDateCreated()), Filters.eq("task_name", task.getTitle()));
 		if (collection.find(filter).first() == null) {
-			Document doc = new Document("taskName", task.getTitle())
-					.append("date created", task.getDateCreated())
-					.append("time created", task.getTimeCreated())
-					.append("total time", task.getTotalTime())
+			Document doc = new Document("task_name", task.getTitle())
+					.append("date_created", task.getDateCreated())
+					.append("time_created", task.getTimeCreated())
+					.append("total_time", task.getTotalTime())
 					.append("stoppages", task.getStoppages())
-					.append("stoppage times",task.getStoppageTimesList());
+					.append("stoppage_times",task.getStoppageTimesList());
 			System.out.println(doc.toJson());
 			try {
 				InsertOneResult result = collection.insertOne(doc);
@@ -110,29 +110,24 @@ public class App {
 	}
 
 	public static boolean update(Task task) {
-		Bson filter = Filters.and(Filters.eq("date created", task.getDateCreated()), Filters.eq("taskName", task.getTitle()));
-		Document doc = new Document("taskName", task.getTitle())
-				.append("date created", task.getDateCreated())
-				.append("time created", task.getTimeCreated())
-				.append("total time", task.getTotalTime())
+		Bson filter = Filters.and(Filters.eq("date_created", task.getDateCreated()), Filters.eq("task_name", task.getTitle()));
+		Document doc = new Document("task_name", task.getTitle())
+				.append("date_created", task.getDateCreated())
+				.append("time_created", task.getTimeCreated())
+				.append("total_time", task.getTotalTime())
 				.append("stoppages", task.getStoppages())
-				.append("stoppage times", task.getStoppageTimesList());
-		Bson update = Updates.set("total time", task.getTotalTime());
+				.append("stoppage_times", task.getStoppageTimesList());
+//		Bson update = Updates.set("total_time", task.getTotalTime());
 		try {
 			UpdateResult result = collection.replaceOne(filter, doc);
-			if (result.getMatchedCount() == 1)
-				return true;
-			else {
-				System.out.println(result);
-				return false;
-			}
+			return result.wasAcknowledged();
 		} catch (Exception e) {
 			throw e;
 		}
 	}
 
 	public static boolean deleteTask(Task task) {
-		Bson filter = Filters.and(Filters.eq("date created", task.getDateCreated()), Filters.eq("taskName", task.getTitle()));
+		Bson filter = Filters.and(Filters.eq("date_created", task.getDateCreated()), Filters.eq("task_name", task.getTitle()));
 
 		try {
 			DeleteResult result = collection.deleteOne(filter);
@@ -154,13 +149,18 @@ public class App {
 			System.out.println("Returned all tasks from db");
 			return str;
 		}
-		Bson filter = Filters.eq("taskName", name);
+		Bson filter = Filters.eq("task_name", name);
 		try {
 			String str = collection.find(filter).projection(Projections.excludeId()).first().toJson();
 			System.out.println("seached for \""+ name+"\" task");
 			return str;
-		} catch (NullPointerException e) {
+		} 
+		catch (NullPointerException e) {
+			// null pointer exception if no document is found
 			return "{ none found }";
+		}
+		catch (Exception e) {
+			throw e;
 		}
 	}
 }
