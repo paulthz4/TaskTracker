@@ -72,7 +72,7 @@ public class Task {
 	}
 
 	public String getDateCreated() {
-		DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy MMM dd E");
+		DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("yyyy MM dd E MMM");
 		String formattedDate = myDateObj.format(myFormatObj);
 		return formattedDate;
 	}

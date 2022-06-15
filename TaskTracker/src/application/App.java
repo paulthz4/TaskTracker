@@ -47,12 +47,12 @@ public class App {
 				System.out.println(cursor.next());
 			}
 
-			MongoDatabase db = mongoClient.getDatabase("tasks");
+			MongoDatabase db = mongoClient.getDatabase("all_tasks");
 
 			try {
 //				MongoCollection<Document> collection = db.getCollection();
 
-				MongoCollection<Document> collection = db.getCollection("test_tasks");
+				MongoCollection<Document> collection = db.getCollection("tasks");
 //				db.createCollection("test");
 				
 				
