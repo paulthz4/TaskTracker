@@ -33,7 +33,7 @@ public class Task {
 
 	public Task(String title) {
 		active = false;
-		this.title = title;
+		this.title = title.trim();
 	}
 
 	// return time in hh:mm format
