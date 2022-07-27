@@ -32,7 +32,7 @@ public class App {
 	static MongoClient mongoClient = MongoClients.create(
 			"mongodb+srv://newUser427:LeocXHZ9L99jZQ16@cluster0.uo7qm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority");
 	static MongoDatabase db = mongoClient.getDatabase("all_tasks");
-	static MongoCollection<Document> collection = db.getCollection("test_tasks");
+	static MongoCollection<Document> collection = db.getCollection("tasks");
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -52,7 +52,7 @@ public class App {
 			try {
 //				MongoCollection<Document> collection = db.getCollection();
 
-				MongoCollection<Document> collection = db.getCollection("tasks");
+				MongoCollection<Document> collection = db.getCollection("test_tasks");
 //				db.createCollection("test");
 				
 				
